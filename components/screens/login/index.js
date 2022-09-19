@@ -6,9 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+
 import {Context} from '../../globalContext';
 
-function Login({navigation}) {
+const Login = ({navigation}) => {
   const globalContext = useContext(Context);
   const {
     domain,
@@ -20,13 +21,15 @@ function Login({navigation}) {
     password,
     setIsLoading,
   } = globalContext;
+
   useEffect(() => {
     setIsLoading(true);
     if (token != null) {
       navigation.navigate('MainPage');
     }
   }, [token]);
-  const get_token = () => {
+
+  const getToken = () => {
     if (!username) {
       alert('Please insert a username!');
     }
@@ -59,10 +62,10 @@ function Login({navigation}) {
   };
   return (
     <View style={styles.container}>
-      <View style={{flex: 1}}>
-        <Text style={styles.header}>Landing Page</Text>
+      <View style={styles.headerView}>
+        <Text style={styles.header}>Covid19 API</Text>
       </View>
-      <View style={{flex: 1.5}}>
+      <View style={styles.inputView}>
         <TextInput
           placeholder="Username"
           onChangeText={setUsername}
@@ -74,18 +77,14 @@ function Login({navigation}) {
           style={styles.input}
         />
       </View>
-      <View style={{flex: 0.175}}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            get_token();
-          }}>
+      <View style={styles.buttonView}>
+        <TouchableOpacity style={styles.button} onPress={() => getToken()}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-}
+};
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -115,6 +114,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'white',
+  },
+  headerView: {
+    flex: 1,
+  },
+  inputView: {
+    flex: 1.5,
+  },
+  buttonView: {
+    flex: 0.175,
   },
 });
 

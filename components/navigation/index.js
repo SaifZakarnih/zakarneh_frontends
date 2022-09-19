@@ -1,11 +1,13 @@
+import {useContext} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
 import Login from '../screens/login';
 import MainPage from '../screens/mainpage';
-import {useContext} from 'react';
 import {Context} from '../globalContext';
+
 const Stack = createNativeStackNavigator();
 
-function Navigator() {
+const Navigator = () => {
   const globalContext = useContext(Context);
   const {token} = globalContext;
 
@@ -27,5 +29,5 @@ function Navigator() {
       )}
     </Stack.Navigator>
   );
-}
+};
 export default Navigator;

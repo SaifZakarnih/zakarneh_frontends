@@ -1,3 +1,4 @@
+import React, {useContext, useState, useEffect} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,19 +9,25 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
-import React, {useContext, useState, useEffect} from 'react';
-import Icon from 'react-native-vector-icons/SimpleLineIcons';
-import {Context} from '../../globalContext';
 import Flag from 'react-native-flags';
-export default function MainPage({navigation}) {
-  const myIcon = <Icon name="logout" size={20} style={{marginTop: 10}}></Icon>;
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
+
+import {Context} from '../../globalContext';
+
+const MainPage = ({navigation}) => {
   const [countries, setCountries] = useState([]);
   const [search, setSearch] = useState('');
+
   const globalContext = useContext(Context);
   const {domain, setToken, token, setIsLoading, isLoading, username} =
     globalContext;
+
+  const myIcon = () => (
+    <Icon name="logout" size={20} style={styles.iconStyle} />
+  );
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       if (isLoading) {
         fetch(`${domain}/api/v1/countries`, {
           method: 'GET',
@@ -33,7 +40,8 @@ export default function MainPage({navigation}) {
     setIsLoading(false);
     fetchData();
   }, []);
-  function handleSubscription(item) {
+
+  const handleSubscription = item => {
     fetch(`${domain}/api/v1/subscribe/${item.Slug}`, {
       method: 'POST',
       headers: {Authorization: `Bearer ${token}`},
@@ -41,18 +49,12 @@ export default function MainPage({navigation}) {
     Alert.alert(
       'Success!',
       `Subscribed to ${item.Country}`,
-      [
-        {
-          text: 'Ok',
-          style: 'default',
-        },
-      ],
-      {
-        cancelable: true,
-      },
+      [{text: 'Ok', style: 'default'}],
+      {cancelable: true},
     );
-  }
-  function handleClick(event, item) {
+  };
+
+  const handleClick = (event, item) => {
     fetch(`${domain}/api/v1/check/${username}/${item.Slug}`, {
       method: 'POST',
     }).then(response => {
@@ -65,15 +67,8 @@ export default function MainPage({navigation}) {
             Alert.alert(
               `${item.Country} Statistics`,
               `Confirmed: ${response.Confirmed} \nDeaths: ${response.Deaths} \nPercentage: ${response.Percentage}`,
-              [
-                {
-                  text: 'Ok',
-                  style: 'default',
-                },
-              ],
-              {
-                cancelable: true,
-              },
+              [{text: 'Ok', style: 'default'}],
+              {cancelable: true},
             );
           })
           .catch(() =>
@@ -92,22 +87,19 @@ export default function MainPage({navigation}) {
               onPress: () => handleSubscription(item),
               style: 'cancel',
             },
-            {
-              text: 'No',
-              style: 'cancel',
-            },
+            {text: 'No', style: 'cancel'},
           ],
-          {
-            cancelable: true,
-          },
+          {cancelable: true},
         );
     });
-  }
+  };
+
   const handleLogout = () => {
     setToken(null);
     navigation.navigate('Login');
   };
-  function country(item) {
+
+  const country = item => {
     const JustAFlag = () => <Flag code={item.ISO2} size={64} />;
     return (
       <View>
@@ -119,16 +111,10 @@ export default function MainPage({navigation}) {
         </TouchableOpacity>
       </View>
     );
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          borderColor: 'black',
-          borderWidth: 1,
-          height: 45,
-        }}>
+      <View style={styles.searchView}>
         <TextInput
           placeholder="Search for a certain country"
           maxLength={20}
@@ -141,9 +127,9 @@ export default function MainPage({navigation}) {
           style={{flex: 9}}
           width="100%"></TextInput>
         <TouchableOpacity
-          style={{flex: 1, alignItems: 'center'}}
+          style={styles.logOutButton}
           onPress={() => handleLogout()}>
-          {myIcon}
+          {myIcon()}
         </TouchableOpacity>
       </View>
       <FlatList
@@ -153,7 +139,7 @@ export default function MainPage({navigation}) {
       />
     </SafeAreaView>
   );
-}
+};
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -180,4 +166,19 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     marginTop: '20%',
   },
+  iconStyle: {
+    marginTop: 10,
+  },
+  logOutButton: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  searchView: {
+    flexDirection: 'row',
+    borderColor: 'black',
+    borderWidth: 1,
+    height: 45,
+  },
 });
+
+export default MainPage;
